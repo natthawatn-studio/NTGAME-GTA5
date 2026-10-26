@@ -1,1 +1,54 @@
+html, body { margin: 0; height: 100%; background: #000; color: #ccc; font: 12px monospace; overflow: hidden; }
+	#canvas { display: block; position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; background: #000; touch-action: none; }
+	/* title screen: the game's loading screen (LOADINGSCREEN_STARTUP) on its 1280x720 stage, scaled to the window; see the script below */
+	@font-face { font-family: 'Chalet'; src: url('/b/8b0b5899ed/title/chalet.woff') format('woff'); }
+	#loading { position: fixed; inset: 0; background: #000; overflow: hidden; transition: opacity .8s; z-index: 5; }
+	#loading.done { opacity: 0; pointer-events: none; }
+	#ls-stage { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 0 0; overflow: hidden; font: 12px Chalet, sans-serif; color: #fff; }
+	#ls-screens { position: absolute; inset: 0; }
+	.ls-screen { position: absolute; inset: 0; }
+	/* one camera per layer, so layers composite in display-list order like Scaleform (no depth test): 640 / tan(55 deg / 2) = 1229, Scaleform's default 3D camera
+	   at the stage centre (moved against the screen's slide, see the script) */
+	.ls-cam { position: absolute; inset: 0; perspective: 1229px; perspective-origin: 640px 360px; }
+	.ls-layer { position: absolute; left: 0; top: 0; transform-origin: 0 0; background-size: 100% 100%; }
+	#ls-logo { position: absolute; left: 95px; top: 492.5px; width: 186px; height: 186px; }
+	#ls-bars { position: absolute; right: 96px; bottom: 54px; display: flex; align-items: flex-end; gap: 3px; max-width: 1088px; }
+	.ls-bar { height: 24px; padding: 0 6px; display: flex; align-items: center; background: rgba(0, 0, 0, .706); border-radius: 2.4px; white-space: nowrap; }
+	#modes { padding: 0; background: none; height: 24px; flex: none; }
+	#modes button { display: flex; align-items: center; height: 24px; padding: 0; border: 0; background: none; color: #fff; font: 12px Chalet, sans-serif; cursor: pointer; }
+	#modes button:disabled { cursor: default; }
+	#modes button[hidden] { display: none; }
+	#modes.ask button:not(:disabled) .ls-key { animation: ls-ask 1.2s ease-in-out infinite; }
+	@keyframes ls-ask { 50% { opacity: .35; } }
+	.ls-key { margin-left: 4px; min-width: 12px; height: 15px; padding: 0 4px; line-height: 16px; border-radius: 2px; background: #fff; color: #000; font-size: 10px; text-transform: uppercase; }
+	.ls-spin { flex: none; width: 22px; height: 22px; margin-left: 2px; background: url('/b/8b0b5899ed/title/spinner.png') center / 24px 24px no-repeat; animation: ls-spin 2s steps(60) infinite; }
+	@keyframes ls-spin { from { transform: rotate(0deg) scaleX(-1); } to { transform: rotate(-360deg) scaleX(-1); } }
+	#label { text-shadow: .85px .85px 1px rgba(0, 0, 0, .45); }
+	#pct { margin-left: 15px; font-variant-numeric: tabular-nums; }
+	/* Live loading activity belongs to the bottom-right loading panel. */
+	#ls-status { position: relative; box-sizing: border-box; width: 560px; height: 112px; flex: none; padding: 4px 8px 10px; flex-direction: column; align-items: stretch; overflow: hidden; }
+	#ls-status-main { display: flex; align-items: center; height: 24px; flex: none; }
+	#ls-status-main #label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+	#ls-status-main #pct { margin-left: auto; padding-left: 15px; }
+	#ls-log { padding: 2px 0 0; display: flex; flex: 1; min-height: 0; overflow: hidden; flex-direction: column; gap: 3px; font: 11px/1.35 Chalet, sans-serif; color: rgba(220, 220, 220, .85); text-shadow: 0 0 2px #000; white-space: normal; pointer-events: none; }
+	#console { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+	#console:empty { display: none; }
+	#data { color: #6a9; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; }
+	#bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255, 255, 255, .08); }
+	#fill { height: 100%; width: 0; background: #7cc576; }
+	#hud { position: fixed; left: 8px; bottom: 8px; max-width: 60vw; white-space: pre-wrap; opacity: .8; pointer-events: none; }
 
+#controller-status { position: fixed; right: 8px; top: 8px; z-index: 10; max-width: 45vw; padding: 6px 9px; color: #fff; background: rgba(0,0,0,.75); pointer-events: none; }
+
+	#game-page-actions #touch-toolbar { position: static; flex-wrap: wrap; justify-content: flex-end; }
+
+
+/* Game view polish */
+html, body { background: #05070a; }
+#controller-status {
+  border: 1px solid rgba(112,225,193,.35);
+  border-radius: 10px;
+  color: #eef4fb;
+  font: 13px/1.45 system-ui, sans-serif;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+}
